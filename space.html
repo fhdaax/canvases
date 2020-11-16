@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Space Canvas</title>
+    <style>
+        body {
+            margin:0;
+        }
+        canvas {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #111a22;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script>
+    
+// Just For Fun. Enjoy finding new constellations ;-)
+
+(function($){
+  
+  function generateStar(canvas, ctx, starRadius){
+			ctx.beginPath();
+			ctx.arc(starRadius + (Math.random() * canvas.width), starRadius + (Math.random() * canvas.height), starRadius*Math.random(), 0, Math.PI*2, false);
+      //ctx.arc(100, 30, starRadius, 0, Math.PI*2, false);
+    
+      var rand = Math.random();
+      if(rand <= 0.5){
+				  ctx.fillStyle = "rgba(255, 255, 255, 1)";
+				  ctx.shadowColor = "rgba(255, 255, 255, 0.5)";
+				  ctx.shadowBlur = 3;
+			}
+			else if(rand > 0.75){
+				  ctx.fillStyle = "rgba(255, 254, 196, 1)";
+				  ctx.shadowColor = "rgba(255, 254, 196, 0.5)";
+				  ctx.shadowBlur = 4; 
+			}
+			else{
+				  ctx.fillStyle = "rgba(192, 247, 255, 1)";
+				  ctx.shadowColor = "rgba(192, 247, 255, 0.5)";
+				  ctx.shadowBlur = 7;
+			}
+			ctx.fill();
+	}
+  
+  $(function(){
+    
+		var canvas = document.getElementById("space");
+		var context = canvas.getContext("2d");
+    
+    onresize = function(){
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+    }
+    onresize();
+		
+    interval = setInterval(
+      function(interval){
+        generateStar(canvas, context, 3);
+      }
+      , 24);
+
+    setTimeout( // Stop sreating stars after 10s
+      function(){ clearInterval(interval); }
+      ,10000
+    );
+    
+	});
+})(jQuery);
+    </script>
+</head>
+<body>
+    <canvas id="space"></canvas>
+</body>
+</html>
