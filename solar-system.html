@@ -1,34 +1,392 @@
 <!DOCTYPE html>
 <html>
-<head>
-<title>Page Title</title>
-<style>
-*{
-  margin:0;
-}
-canvas {
-	position: absolute;
-}
-
-</style>
-
-</head>
-<body>
-<canvas id="space"></canvas>
-<script>
-/*
-  Tested in recent versions on Firefox/Safari/Chrome.
-  
-  Should be running at 60fps, if it's not then let me know in the comments
-  
-  Inspired by artwork by Nina Geometrieva.
-
-  If you want to take a look at the source code its available here: www.github.com/hparton/spaceeee
-*/
-
-!function t(i,e,o){function n(r,s){if(!e[r]){if(!i[r]){var h="function"==typeof require&&require;if(!s&&h)return h(r,!0);if(a)return a(r,!0);var l=new Error("Cannot find module '"+r+"'");throw l.code="MODULE_NOT_FOUND",l}var d=e[r]={exports:{}};i[r][0].call(d.exports,function(t){var e=i[r][1][t];return n(e?e:t)},d,d.exports,t,i,e,o)}return e[r].exports}for(var a="function"==typeof require&&require,r=0;r<o.length;r++)n(o[r]);return n}({1:[function(t,i,e){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var o=e.genLine=function(t,i,e,o,n,a,r){for(var s=t.getContext("2d"),h={x:i,y:e},l=h,d=o,u=e,c=[],f=[],p=Math.ceil(o/(4*a)+1),g=0;g<n;g+=n/4)c.push(n/4*g);for(var v=0;v<p;v++)f.push({top:c[Math.floor(Math.random()*c.length)],bottom:-c[Math.floor(Math.random()*c.length)]});s.beginPath(),s.strokeStyle="green",s.lineWidth="4",s.moveTo(h.x,h.y+10*d);for(var x=0;x<p;x++){var y=l.y,w=l.x,b=u+-f[x].top,m=u+-f[x].bottom;s.quadraticCurveTo(w,y,w,y-a),s.lineTo(w,b),s.quadraticCurveTo(w,b-a,w+a,b-a),s.quadraticCurveTo(w+2*a,b-a,w+2*a,b),s.lineTo(w+2*a,m-a),x!==p-1&&s.quadraticCurveTo(w+2*a,m,w+3*a,m),l.x=w+4*a,l.y=m}s.lineTo(l.x-2*a,l.y+10*d),s.fillStyle=r,s.fill()};e.generatePlanetTexture=function(t,i,e){var n=document.createElement("canvas"),a=n.getContext("2d");return n.width=n.height=t,a.beginPath(),a.arc(n.width/2,n.height/2,n.width/2,0,2*Math.PI,!0),a.save(),a.clip(),e&&(a.translate(n.width/2,n.height/2),a.rotate(e),a.translate(-n.width/2,-n.width/2)),i.forEach(function(t){o(n,0,t.offset,n.width,t.height,t.width,t.fill)}),a.restore(),a.canvas}},{}],2:[function(t,i,e){"use strict";function o(t,i){return Math.round(Math.random()*i-t+t)}Object.defineProperty(e,"__esModule",{value:!0}),e.StarField=void 0;var n=t("./utils"),a=e.StarField=function(t,i){this.parentCanvas=t,this.background=i};a.prototype.init=function(){this.el=(0,n.createChildCanvas)("star-field",this.parentCanvas,-3,this.background),this.drawStarField(200)},a.prototype._drawStar=function(t){var i=Math.random()*this.el.canvas.width,e=Math.random()*this.el.canvas.height,n=2*Math.random(),a=o(80,100)/100;t.beginPath(),t.globalAlpha=a,t.fillStyle="#ffffff",t.arc(i,e,n,0,2*Math.PI,!0),t.fill(),t.closePath()},a.prototype.drawStarField=function(t){for(var i=0;i<=t;i++)this._drawStar(this.el.ctx)}},{"./utils":3}],3:[function(t,i,e){"use strict";Object.defineProperty(e,"__esModule",{value:!0});e.createChildCanvas=function(t,i,e,o){var n=document.createElement("canvas"),a=i,r=n.getContext("2d");return n.id=t,n.width=i.width,n.height=i.height,n.style.position="absolute",n.style.zIndex=e,n.style.left="0",n.style.top="0",o&&(n.style.background=o),a.parentNode.insertBefore(n,a),{canvas:n,ctx:r}}},{}],4:[function(t,i,e){"use strict";function o(){this.width=window.innerWidth,this.height=window.innerHeight,this.canvas=document.getElementById("space"),this.ctx=this.canvas.getContext("2d"),this.ctx.canvas.width=this.width,this.ctx.canvas.height=this.height,this.sun=new n(this.canvas.width/2,this.canvas.height-this.canvas.height/2,145,f),this.planets=[],this.registerPlanets(),this.updatePlanetPosition()}function n(t,i,e,o){this.radius=e,this.position={},this.position.x=t,this.position.y=i,this.children=[],this.texture=o}function a(t,i,e,o,n,s,h){this.radius=e,this.distance=o,this.angle=360*Math.random()+0,this.angularSpeed=6/(2*this.distance),this.position={},this.position.x=t,this.position.y=i,this.texture=n,this.border=s,h&&(this.moon=new a(1.5*this.position.x,1.5*this.position.y,this.radius/3.5),this.moon.angularSpeed=.1),this.background=r(c)}function r(t){var i,e=[];for(i in t)t.hasOwnProperty(i)&&e.push(i);return t[e[Math.floor(Math.random()*e.length)]]}function s(t,i){var e=parseInt(t.slice(1),16),o=i<0?0:255,n=i<0?i*-1:i,a=e>>16,r=e>>8&255,s=255&e;return"#"+(16777216+65536*(Math.round((o-a)*n)+a)+256*(Math.round((o-r)*n)+r)+(Math.round((o-s)*n)+s)).toString(16).slice(1)}var h=t("./js/backgroundPattern"),l=t("./js/stars"),d=t("./js/utils"),u={planets:7},c={pink:"#e29fc7",purple:"#5e3d86",ice:"#a7b0d0"},f=(0,h.generatePlanetTexture)(600,[{offset:-40,height:10,width:4,fill:"#fbe1d9"},{offset:140,height:18,width:4,fill:"#efbad3"},{offset:280,height:18,width:4,fill:"#e29fc7"},{offset:420,height:18,width:4,fill:"#ce86b5"}],1);o.prototype.init=function(){function t(){n.clearPlanets(),n.updatePlanetPosition(),n.drawPlanets(),requestAnimationFrame(function(i){t()})}var i=new l.StarField(this.canvas,"#251b4f");i.init(),this.drawSun();for(var e=(0,d.createChildCanvas)("trajectory",this.canvas,-2),o=this.planets.length-1;o>=0;o--)g(e.ctx,{x:this.sun.position.x,y:this.sun.position.y,radius:this.sun.radius+150+150*o});var n=this;t()},o.prototype.registerPlanets=function(){for(var t=u.planets-1;t>=0;t--){var i=r(c),e=new a(this.sun.position.y,this.sun.position.x,Math.floor(30*Math.random())+15,this.sun.radius+150+150*t,(0,h.generatePlanetTexture)(600,[{offset:-40,height:10,width:20,fill:i},{offset:140,height:20,width:20,fill:s(i,.2)},{offset:420,height:20,width:20,fill:s(i,.4)}],1),Math.random()>=.5,Math.random()>=.5);this.planets.push(e)}},o.prototype.updatePlanetPosition=function(){for(var t=this.planets.length-1;t>=0;t--){var i=this.planets[t];i.angle+=i.angularSpeed;var e=Math.cos(i.angle)*i.distance,o=Math.sin(i.angle)*i.distance;if(i.position.x=e+this.sun.position.x,i.position.y=o+this.sun.position.y,i.moon){i.moon.angle+=i.moon.angularSpeed;var n=Math.cos(i.moon.angle)*(1.5*i.radius),a=Math.sin(i.moon.angle)*(1.5*i.radius);i.moon.position.x=n+i.position.x,i.moon.position.y=a+i.position.y}}},o.prototype.clearPlanets=function(){for(var t=this.planets.length-1;t>=0;t--){var i=this.planets[t];this.ctx.clearRect(i.position.x-i.radius/2-75,i.position.y-i.radius/2-75,i.radius+150,i.radius+150)}},o.prototype.drawSun=function(t){var i=(0,d.createChildCanvas)("sun",this.canvas,-1),e=this.sun;p(i.ctx,{x:e.position.x,y:e.position.y,radius:e.radius,background:e.background,atmosphere:{color:"#82648B",rings:4},shadow:{color:"rgba(130,100,139,0.6)",blur:120},texture:e.texture})},o.prototype.drawPlanets=function(){for(var t=this.planets.length-1;t>=0;t--){var i=this.planets[t];p(this.ctx,{x:i.position.x,y:i.position.y,radius:i.radius,background:i.background,shadow:{color:"rgba(247,222,226,0.35)",blur:50},texture:i.texture,border:i.border}),i.moon&&(g(this.ctx,{x:i.position.x,y:i.position.y,radius:1.5*i.radius}),p(this.ctx,{x:i.moon.position.x,y:i.moon.position.y,radius:i.moon.radius,background:i.moon.background,shadow:{color:"rgba(247,222,226,0.2)",blur:10},texture:i.moon.texture}))}};var p=function(t){var i=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],e=i.x,o=i.y,n=i.radius,a=void 0===n?20:n,r=i.shadow,s=void 0===r?{}:r,h=i.atmosphere,l=void 0===h?{}:h,d=i.border,u=void 0!==d&&d,c=i.background,f=void 0===c?"grey":c,p=i.texture;if(s.color&&(t.shadowColor=s.color,t.shadowBlur=s.blur,t.shadowOffsetX=0,t.shadowOffsetY=0),l.rings){for(var g=l.rings-1;g>=0;g--)t.fillStyle=l.color,t.globalAlpha=.6-.15*g,t.beginPath(),t.arc(e,o,a+20*g,0,2*Math.PI,!0),t.fill(),t.closePath();t.globalAlpha=1}t.beginPath(),t.arc(e,o,a,0,2*Math.PI,!0),p?t.drawImage(p,e-a,o-a,2*a,2*a):(t.fillStyle=f,t.fill()),u&&(t.strokeStyle="white",t.lineWidth=3,t.stroke()),t.closePath(),s.color&&(t.shadowBlur=0)},g=function(t){var i=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],e=i.x,o=i.y,n=i.radius,a=i.width,r=void 0===a?2:a,s=i.color,h=void 0===s?"#483b67":s;t.strokeStyle="#483b67",t.lineWidth=r,t.beginPath(),t.arc(e,o,n+2,0,2*Math.PI,!0),t.strokeStyle=h,t.closePath(),t.stroke()},v=new o;v.init()},{"./js/backgroundPattern":1,"./js/stars":2,"./js/utils":3}]},{},[4]);
-
-</script>
-
-</body>
+  <head>
+    <title>Solar System</title>
+    <style>
+      * {
+        margin: 0;
+      }
+      canvas {
+        position: absolute;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="space"></canvas>
+    <script>
+      !(function t(i, e, o) {
+        function n(r, s) {
+          if (!e[r]) {
+            if (!i[r]) {
+              var h = 'function' == typeof require && require;
+              if (!s && h) return h(r, !0);
+              if (a) return a(r, !0);
+              var l = new Error("Cannot find module '" + r + "'");
+              throw ((l.code = 'MODULE_NOT_FOUND'), l);
+            }
+            var d = (e[r] = { exports: {} });
+            i[r][0].call(
+              d.exports,
+              function (t) {
+                var e = i[r][1][t];
+                return n(e ? e : t);
+              },
+              d,
+              d.exports,
+              t,
+              i,
+              e,
+              o
+            );
+          }
+          return e[r].exports;
+        }
+        for (var a = 'function' == typeof require && require, r = 0; r < o.length; r++) n(o[r]);
+        return n;
+      })(
+        {
+          1: [
+            function (t, i, e) {
+              'use strict';
+              Object.defineProperty(e, '__esModule', { value: !0 });
+              var o = (e.genLine = function (t, i, e, o, n, a, r) {
+                for (
+                  var s = t.getContext('2d'),
+                    h = { x: i, y: e },
+                    l = h,
+                    d = o,
+                    u = e,
+                    c = [],
+                    f = [],
+                    p = Math.ceil(o / (4 * a) + 1),
+                    g = 0;
+                  g < n;
+                  g += n / 4
+                )
+                  c.push((n / 4) * g);
+                for (var v = 0; v < p; v++)
+                  f.push({ top: c[Math.floor(Math.random() * c.length)], bottom: -c[Math.floor(Math.random() * c.length)] });
+                s.beginPath(), (s.strokeStyle = 'green'), (s.lineWidth = '4'), s.moveTo(h.x, h.y + 10 * d);
+                for (var x = 0; x < p; x++) {
+                  var y = l.y,
+                    w = l.x,
+                    b = u + -f[x].top,
+                    m = u + -f[x].bottom;
+                  s.quadraticCurveTo(w, y, w, y - a),
+                    s.lineTo(w, b),
+                    s.quadraticCurveTo(w, b - a, w + a, b - a),
+                    s.quadraticCurveTo(w + 2 * a, b - a, w + 2 * a, b),
+                    s.lineTo(w + 2 * a, m - a),
+                    x !== p - 1 && s.quadraticCurveTo(w + 2 * a, m, w + 3 * a, m),
+                    (l.x = w + 4 * a),
+                    (l.y = m);
+                }
+                s.lineTo(l.x - 2 * a, l.y + 10 * d), (s.fillStyle = r), s.fill();
+              });
+              e.generatePlanetTexture = function (t, i, e) {
+                var n = document.createElement('canvas'),
+                  a = n.getContext('2d');
+                return (
+                  (n.width = n.height = t),
+                  a.beginPath(),
+                  a.arc(n.width / 2, n.height / 2, n.width / 2, 0, 2 * Math.PI, !0),
+                  a.save(),
+                  a.clip(),
+                  e && (a.translate(n.width / 2, n.height / 2), a.rotate(e), a.translate(-n.width / 2, -n.width / 2)),
+                  i.forEach(function (t) {
+                    o(n, 0, t.offset, n.width, t.height, t.width, t.fill);
+                  }),
+                  a.restore(),
+                  a.canvas
+                );
+              };
+            },
+            {},
+          ],
+          2: [
+            function (t, i, e) {
+              'use strict';
+              function o(t, i) {
+                return Math.round(Math.random() * i - t + t);
+              }
+              Object.defineProperty(e, '__esModule', { value: !0 }), (e.StarField = void 0);
+              var n = t('./utils'),
+                a = (e.StarField = function (t, i) {
+                  (this.parentCanvas = t), (this.background = i);
+                });
+              (a.prototype.init = function () {
+                (this.el = (0, n.createChildCanvas)('star-field', this.parentCanvas, -3, this.background)), this.drawStarField(200);
+              }),
+                (a.prototype._drawStar = function (t) {
+                  var i = Math.random() * this.el.canvas.width,
+                    e = Math.random() * this.el.canvas.height,
+                    n = 2 * Math.random(),
+                    a = o(80, 100) / 100;
+                  t.beginPath(),
+                    (t.globalAlpha = a),
+                    (t.fillStyle = '#ffffff'),
+                    t.arc(i, e, n, 0, 2 * Math.PI, !0),
+                    t.fill(),
+                    t.closePath();
+                }),
+                (a.prototype.drawStarField = function (t) {
+                  for (var i = 0; i <= t; i++) this._drawStar(this.el.ctx);
+                });
+            },
+            { './utils': 3 },
+          ],
+          3: [
+            function (t, i, e) {
+              'use strict';
+              Object.defineProperty(e, '__esModule', { value: !0 });
+              e.createChildCanvas = function (t, i, e, o) {
+                var n = document.createElement('canvas'),
+                  a = i,
+                  r = n.getContext('2d');
+                return (
+                  (n.id = t),
+                  (n.width = i.width),
+                  (n.height = i.height),
+                  (n.style.position = 'absolute'),
+                  (n.style.zIndex = e),
+                  (n.style.left = '0'),
+                  (n.style.top = '0'),
+                  o && (n.style.background = o),
+                  a.parentNode.insertBefore(n, a),
+                  { canvas: n, ctx: r }
+                );
+              };
+            },
+            {},
+          ],
+          4: [
+            function (t, i, e) {
+              'use strict';
+              function o() {
+                (this.width = window.innerWidth),
+                  (this.height = window.innerHeight),
+                  (this.canvas = document.getElementById('space')),
+                  (this.ctx = this.canvas.getContext('2d')),
+                  (this.ctx.canvas.width = this.width),
+                  (this.ctx.canvas.height = this.height),
+                  (this.sun = new n(this.canvas.width / 2, this.canvas.height - this.canvas.height / 2, 145, f)),
+                  (this.planets = []),
+                  this.registerPlanets(),
+                  this.updatePlanetPosition();
+              }
+              function n(t, i, e, o) {
+                (this.radius = e),
+                  (this.position = {}),
+                  (this.position.x = t),
+                  (this.position.y = i),
+                  (this.children = []),
+                  (this.texture = o);
+              }
+              function a(t, i, e, o, n, s, h) {
+                (this.radius = e),
+                  (this.distance = o),
+                  (this.angle = 360 * Math.random() + 0),
+                  (this.angularSpeed = 6 / (2 * this.distance)),
+                  (this.position = {}),
+                  (this.position.x = t),
+                  (this.position.y = i),
+                  (this.texture = n),
+                  (this.border = s),
+                  h &&
+                    ((this.moon = new a(1.5 * this.position.x, 1.5 * this.position.y, this.radius / 3.5)), (this.moon.angularSpeed = 0.1)),
+                  (this.background = r(c));
+              }
+              function r(t) {
+                var i,
+                  e = [];
+                for (i in t) t.hasOwnProperty(i) && e.push(i);
+                return t[e[Math.floor(Math.random() * e.length)]];
+              }
+              function s(t, i) {
+                var e = parseInt(t.slice(1), 16),
+                  o = i < 0 ? 0 : 255,
+                  n = i < 0 ? i * -1 : i,
+                  a = e >> 16,
+                  r = (e >> 8) & 255,
+                  s = 255 & e;
+                return (
+                  '#' +
+                  (16777216 + 65536 * (Math.round((o - a) * n) + a) + 256 * (Math.round((o - r) * n) + r) + (Math.round((o - s) * n) + s))
+                    .toString(16)
+                    .slice(1)
+                );
+              }
+              var h = t('./js/backgroundPattern'),
+                l = t('./js/stars'),
+                d = t('./js/utils'),
+                u = { planets: 7 },
+                c = { pink: '#e29fc7', purple: '#5e3d86', ice: '#a7b0d0' },
+                f = (0, h.generatePlanetTexture)(
+                  600,
+                  [
+                    { offset: -40, height: 10, width: 4, fill: '#fbe1d9' },
+                    { offset: 140, height: 18, width: 4, fill: '#efbad3' },
+                    { offset: 280, height: 18, width: 4, fill: '#e29fc7' },
+                    { offset: 420, height: 18, width: 4, fill: '#ce86b5' },
+                  ],
+                  1
+                );
+              (o.prototype.init = function () {
+                function t() {
+                  n.clearPlanets(),
+                    n.updatePlanetPosition(),
+                    n.drawPlanets(),
+                    requestAnimationFrame(function (i) {
+                      t();
+                    });
+                }
+                var i = new l.StarField(this.canvas, '#251b4f');
+                i.init(), this.drawSun();
+                for (var e = (0, d.createChildCanvas)('trajectory', this.canvas, -2), o = this.planets.length - 1; o >= 0; o--)
+                  g(e.ctx, { x: this.sun.position.x, y: this.sun.position.y, radius: this.sun.radius + 150 + 150 * o });
+                var n = this;
+                t();
+              }),
+                (o.prototype.registerPlanets = function () {
+                  for (var t = u.planets - 1; t >= 0; t--) {
+                    var i = r(c),
+                      e = new a(
+                        this.sun.position.y,
+                        this.sun.position.x,
+                        Math.floor(30 * Math.random()) + 15,
+                        this.sun.radius + 150 + 150 * t,
+                        (0, h.generatePlanetTexture)(
+                          600,
+                          [
+                            { offset: -40, height: 10, width: 20, fill: i },
+                            { offset: 140, height: 20, width: 20, fill: s(i, 0.2) },
+                            { offset: 420, height: 20, width: 20, fill: s(i, 0.4) },
+                          ],
+                          1
+                        ),
+                        Math.random() >= 0.5,
+                        Math.random() >= 0.5
+                      );
+                    this.planets.push(e);
+                  }
+                }),
+                (o.prototype.updatePlanetPosition = function () {
+                  for (var t = this.planets.length - 1; t >= 0; t--) {
+                    var i = this.planets[t];
+                    i.angle += i.angularSpeed;
+                    var e = Math.cos(i.angle) * i.distance,
+                      o = Math.sin(i.angle) * i.distance;
+                    if (((i.position.x = e + this.sun.position.x), (i.position.y = o + this.sun.position.y), i.moon)) {
+                      i.moon.angle += i.moon.angularSpeed;
+                      var n = Math.cos(i.moon.angle) * (1.5 * i.radius),
+                        a = Math.sin(i.moon.angle) * (1.5 * i.radius);
+                      (i.moon.position.x = n + i.position.x), (i.moon.position.y = a + i.position.y);
+                    }
+                  }
+                }),
+                (o.prototype.clearPlanets = function () {
+                  for (var t = this.planets.length - 1; t >= 0; t--) {
+                    var i = this.planets[t];
+                    this.ctx.clearRect(i.position.x - i.radius / 2 - 75, i.position.y - i.radius / 2 - 75, i.radius + 150, i.radius + 150);
+                  }
+                }),
+                (o.prototype.drawSun = function (t) {
+                  var i = (0, d.createChildCanvas)('sun', this.canvas, -1),
+                    e = this.sun;
+                  p(i.ctx, {
+                    x: e.position.x,
+                    y: e.position.y,
+                    radius: e.radius,
+                    background: e.background,
+                    atmosphere: { color: '#82648B', rings: 4 },
+                    shadow: { color: 'rgba(130,100,139,0.6)', blur: 120 },
+                    texture: e.texture,
+                  });
+                }),
+                (o.prototype.drawPlanets = function () {
+                  for (var t = this.planets.length - 1; t >= 0; t--) {
+                    var i = this.planets[t];
+                    p(this.ctx, {
+                      x: i.position.x,
+                      y: i.position.y,
+                      radius: i.radius,
+                      background: i.background,
+                      shadow: { color: 'rgba(247,222,226,0.35)', blur: 50 },
+                      texture: i.texture,
+                      border: i.border,
+                    }),
+                      i.moon &&
+                        (g(this.ctx, { x: i.position.x, y: i.position.y, radius: 1.5 * i.radius }),
+                        p(this.ctx, {
+                          x: i.moon.position.x,
+                          y: i.moon.position.y,
+                          radius: i.moon.radius,
+                          background: i.moon.background,
+                          shadow: { color: 'rgba(247,222,226,0.2)', blur: 10 },
+                          texture: i.moon.texture,
+                        }));
+                  }
+                });
+              var p = function (t) {
+                  var i = arguments.length <= 1 || void 0 === arguments[1] ? {} : arguments[1],
+                    e = i.x,
+                    o = i.y,
+                    n = i.radius,
+                    a = void 0 === n ? 20 : n,
+                    r = i.shadow,
+                    s = void 0 === r ? {} : r,
+                    h = i.atmosphere,
+                    l = void 0 === h ? {} : h,
+                    d = i.border,
+                    u = void 0 !== d && d,
+                    c = i.background,
+                    f = void 0 === c ? 'grey' : c,
+                    p = i.texture;
+                  if (
+                    (s.color && ((t.shadowColor = s.color), (t.shadowBlur = s.blur), (t.shadowOffsetX = 0), (t.shadowOffsetY = 0)), l.rings)
+                  ) {
+                    for (var g = l.rings - 1; g >= 0; g--)
+                      (t.fillStyle = l.color),
+                        (t.globalAlpha = 0.6 - 0.15 * g),
+                        t.beginPath(),
+                        t.arc(e, o, a + 20 * g, 0, 2 * Math.PI, !0),
+                        t.fill(),
+                        t.closePath();
+                    t.globalAlpha = 1;
+                  }
+                  t.beginPath(),
+                    t.arc(e, o, a, 0, 2 * Math.PI, !0),
+                    p ? t.drawImage(p, e - a, o - a, 2 * a, 2 * a) : ((t.fillStyle = f), t.fill()),
+                    u && ((t.strokeStyle = 'white'), (t.lineWidth = 3), t.stroke()),
+                    t.closePath(),
+                    s.color && (t.shadowBlur = 0);
+                },
+                g = function (t) {
+                  var i = arguments.length <= 1 || void 0 === arguments[1] ? {} : arguments[1],
+                    e = i.x,
+                    o = i.y,
+                    n = i.radius,
+                    a = i.width,
+                    r = void 0 === a ? 2 : a,
+                    s = i.color,
+                    h = void 0 === s ? '#483b67' : s;
+                  (t.strokeStyle = '#483b67'),
+                    (t.lineWidth = r),
+                    t.beginPath(),
+                    t.arc(e, o, n + 2, 0, 2 * Math.PI, !0),
+                    (t.strokeStyle = h),
+                    t.closePath(),
+                    t.stroke();
+                },
+                v = new o();
+              v.init();
+            },
+            { './js/backgroundPattern': 1, './js/stars': 2, './js/utils': 3 },
+          ],
+        },
+        {},
+        [4]
+      );
+    </script>
+  </body>
 </html>
